@@ -60,3 +60,40 @@ form.addEventListener('submit', async (e) => {
     alert('Something went wrong. Please try again.');
   }
 });
+
+// Phone preview — idle float + cursor-tilt, just for fun.
+// Runs one rAF loop so the float and tilt never fight over the transform property.
+const phonePreview = document.querySelector('.phone-preview');
+const productGrid = document.querySelector('.product-grid');
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const supportsHoverTilt = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+if (phonePreview && productGrid && !prefersReducedMotion) {
+  let targetRotX = 0, targetRotY = 0;
+  let currentRotX = 0, currentRotY = 0;
+  const startTime = performance.now();
+
+  if (supportsHoverTilt) {
+    productGrid.addEventListener('mousemove', (e) => {
+      const rect = phonePreview.getBoundingClientRect();
+      const relX = (e.clientX - rect.left) / rect.width - 0.5;
+      const relY = (e.clientY - rect.top) / rect.height - 0.5;
+      targetRotY = relX * 14;
+      targetRotX = -relY * 14;
+    });
+    productGrid.addEventListener('mouseleave', () => {
+      targetRotX = 0;
+      targetRotY = 0;
+    });
+  }
+
+  function tickPhone(now) {
+    currentRotX += (targetRotX - currentRotX) * 0.08;
+    currentRotY += (targetRotY - currentRotY) * 0.08;
+    const floatOffset = Math.sin((now - startTime) / 1000) * 8;
+    phonePreview.style.transform =
+      `perspective(900px) translateY(${floatOffset}px) rotateX(${currentRotX}deg) rotateY(${currentRotY}deg)`;
+    requestAnimationFrame(tickPhone);
+  }
+  requestAnimationFrame(tickPhone);
+}
