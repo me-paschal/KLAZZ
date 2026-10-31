@@ -16,7 +16,11 @@
   --ff-body:    'Inter', sans-serif;
 }
 
-html { scroll-behavior: smooth; }
+html { 
+  scroll-behavior: smooth; 
+  overflow-x: hidden; 
+  max-width: 100%;
+}
 
 body {
   background: var(--bg);
@@ -25,6 +29,7 @@ body {
   font-size: 16px;
   line-height: 1.6;
   overflow-x: hidden;
+  max-width: 100%;
 }
 
 ::-webkit-scrollbar { width: 6px; }
@@ -142,11 +147,13 @@ nav.scrolled {
 
 #hero {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   position: relative;
   overflow: hidden;
   padding: 140px 4vw 60px;
+  background-color: #F8F4EE;
   background-image: url('images/hero-banner.jpg');
   background-size: cover;
   background-position: right center;
@@ -1196,6 +1203,29 @@ footer {
 .footer-tag { font-size: 0.8rem; color: var(--muted); }
 
 @media (max-width: 900px) {
+  /* Fix horizontal overflow by switching horizontal slide-ins to vertical on mobile */
+  .pillar,
+  .step-card,
+  .phone-preview,
+  .preview-item,
+  .feature-item,
+  .mstat,
+  .rollout-panel,
+  .ambassador-panel {
+    transform: translateY(30px);
+  }
+  .pillar.sol-animated,
+  .step-card.how-animated,
+  .phone-preview.prod-animated,
+  .preview-item.prod-item-animated,
+  .feature-item.feat-animated,
+  .mstat.mstat-animated,
+  .rollout-panel.roll-animated,
+  .ambassador-panel.roll-animated {
+    transform: none;
+  }
+  .waitlist-form select { width: 100%; min-width: unset; }
+
   #problem .problem-grid {
     flex-direction: column;
     gap: 24px;
@@ -1268,7 +1298,7 @@ footer {
   .btn-primary, .btn-secondary { width: 100%; text-align: center; }
 
   .hero-stats {
-    flex-wrap: nowrap !important;
+    flex-wrap: wrap !important; /* Prevents stats from squishing/overflowing on narrow phones */
     justify-content: space-between;
     gap: 12px;
     padding-top: 28px;
